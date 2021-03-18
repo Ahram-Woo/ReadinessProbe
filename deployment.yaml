@@ -1,21 +1,29 @@
-apiVersion: apps/v1
 kind: Deployment
+apiVersion: apps/v1
 metadata:
-  name: deployment-1
+  name: hello-world-app
 spec:
+  replicas: 4
   selector:
     matchLabels:
-      type: app  # label
-  replicas: 2
-  strategy:
-    type: Recreate
-  revisionHistoryLimit: 1  # 여러번 배포를 하더라도 하나의 replicaset만 남는다.
+      app: hello-world-app
   template:
     metadata:
       labels:
-        type: app  # label
+        app: hello-world-app
     spec:
       containers:
-      - name: container
-        image: kubetm/app:v1
-      terminationGracePeriodSeconds: 10
+      - name: hello-world-app
+        image: python:2.7
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash"]
+        args: ["-c", "echo \"<p>Hello from $(hostname)</p>\" > index.html; sleep 30000 && python -m SimpleHTTPServer 8080"]
+        ports:
+        - name: http
+          containerPort: 8080
+        readinessProbe: # 이 부분부터 추가하면 된다.
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10

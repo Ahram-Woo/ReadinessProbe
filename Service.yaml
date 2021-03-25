@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: random-generator
+  name: pod-with-liveness-check
 spec:
   selector:
-    app: random-generator
+    app: pod-with-liveness-check
   ports:
   - port: 8080
     protocol: TCP
